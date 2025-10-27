@@ -1,12 +1,36 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Login from './components/Login';
 import Tasks from './pages/tasks';
 import AuditLogs from './components/AuditLogs';
-import { TaskIcon, AuditIcon } from './components/Icon';
+import {
+  TaskIcon, AuditIcon, LogOutIcon, EyeIcon, 
+  EyeOffIcon, LogInIcon
+} from './components/Icon';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('tasks');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Check if user is already authenticated on component mount
+  useEffect(() => {
+    const authStatus = localStorage.getItem('isAuthenticated');
+    if (authStatus === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogin = (success) => {
+    setIsAuthenticated(success);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('isAuthenticated');
+    setIsAuthenticated(false);
+    setActiveTab('tasks');
+  };
 
   // Close mobile menu on resize
   useEffect(() => {
@@ -25,6 +49,12 @@ function App() {
     { id: 'audit-logs', label: 'Audit Logs', icon: AuditIcon }
   ];
 
+  // Show login page if not authenticated
+  if (!isAuthenticated) {
+    return <Login onLogin={handleLogin} />;
+  }
+
+  // Main application if authenticated
   return (
     <div className="app">
       {/* Modern Sidebar */}
@@ -64,6 +94,17 @@ function App() {
             );
           })}
         </nav>
+
+        {/* Logout Button */}
+        <div className="sidebar-footer">
+          <button
+            className="nav-link logout-button"
+            onClick={handleLogout}
+          >
+            <LogOutIcon className="nav-icon" />
+            <span>Logout</span>
+          </button>
+        </div>
       </motion.div>
 
       {/* Main Content */}
