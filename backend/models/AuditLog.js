@@ -15,29 +15,29 @@ const AuditLogModel = {
   },
 
   // Get all audit logs with pagination
-  async findAll({ page = 1, limit = 10 } = {}) {
-    const skip = (page - 1) * limit;
+async findAll({ page = 1, limit = 10, filters = {}, sort = { timestamp: -1 } } = {}) {
+  const skip = (page - 1) * limit;
 
-    const [logs, total] = await Promise.all([
-      this.collection()
-        .find()
-        .sort({ timestamp: -1 })
-        .skip(skip)
-        .limit(parseInt(limit))
-        .toArray(),
-      this.collection().countDocuments()
-    ]);
+  const [logs, total] = await Promise.all([
+    this.collection()
+      .find(filters)
+      .sort(sort)
+      .skip(skip)
+      .limit(parseInt(limit))
+      .toArray(),
+    this.collection().countDocuments(filters)
+  ]);
 
-    return {
-      logs,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / limit)
-      }
-    };
-  },
+  return {
+    logs,
+    pagination: {
+      page: parseInt(page),
+      limit: parseInt(limit),
+      total,
+      pages: Math.ceil(total / limit)
+    }
+  };
+},
 
   // Get logs for a specific task
   async findByTaskId(taskId) {

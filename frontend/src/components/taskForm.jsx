@@ -94,14 +94,22 @@ const TaskForm = ({ task, onSubmit, onCancel, isEditing }) => {
             {errors.description && <div className="form-error">{errors.description}</div>}
           </div>
           
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
-            <button type="button" className="btn btn-secondary" onClick={onCancel}>
-              Cancel
-            </button>
-            <button type="submit" className="btn btn-primary">
-              {isEditing ? 'Update Task' : 'Create Task'}
-            </button>
-          </div>
+
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '2rem' }}>
+              <button 
+                type="button" 
+                className="btn-modern ghost" 
+                onClick={onCancel}
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                className="btn-modern primary"
+              >
+                {isEditing ? 'Update Task' : 'Create Task'}
+              </button>
+            </div>
         </form>
       </div>
     </div>

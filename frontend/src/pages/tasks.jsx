@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { taskAPI } from '../services/api';
 import TaskTable from '../components/TaskTable';
 import TaskForm from '../components/TaskForm';
-import { TaskIcon,PlusIcon, SearchIcon } from '../components/Icon';
+import { TaskIcon,PlusIcon, SearchIcon, FilterIcon, SortAscIcon } from '../components/Icon';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
@@ -125,8 +125,7 @@ const Tasks = () => {
           </motion.button>
         </div>
       </motion.div>
-
-      {/* Stats Grid */}
+      
       <div className="stats-grid">
         <motion.div 
           className="stat-card"
@@ -138,7 +137,7 @@ const Tasks = () => {
             <div className="stat-info">
               <h3>Total Tasks</h3>
               <div className="stat-value">
-                {loading ? <Skeleton width={60} /> : stats.total}
+                {loading ? <Skeleton width={60} /> : pagination.total}
               </div>
             </div>
             <div className="stat-icon">
@@ -155,64 +154,49 @@ const Tasks = () => {
         >
           <div className="stat-content">
             <div className="stat-info">
-              <h3>Completed</h3>
+              <h3>This Page</h3>
               <div className="stat-value">
-                {loading ? <Skeleton width={60} /> : stats.completed}
+                {loading ? <Skeleton width={60} /> : tasks.length}
               </div>
             </div>
-            <div className="stat-icon" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10b981' }}>
-              ✓
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div 
-          className="stat-card"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          <div className="stat-content">
-            <div className="stat-info">
-              <h3>Pending</h3>
-              <div className="stat-value">
-                {loading ? <Skeleton width={60} /> : stats.pending}
-              </div>
-            </div>
-            <div className="stat-icon" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b' }}>
-              !
+            <div className="stat-icon" style={{ background: 'rgba(99, 102, 241, 0.1)', color: '#6366f1' }}>
+              📄
             </div>
           </div>
         </motion.div>
       </div>
 
-      {/* Action Bar */}
-      <motion.div 
-        className="action-bar"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        <div className="search-container">
-          <SearchIcon className="search-icon" />
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Search tasks by title or description..."
-            value={searchTerm}
-            onChange={handleSearch}
-          />
-        </div>
-        
-        <div style={{ display: 'flex', gap: '1rem' }}>
-          <button className="btn btn-secondary">
-            Filter
-          </button>
-          <button className="btn btn-secondary">
-            Sort
-          </button>
-        </div>
-      </motion.div>
+
+
+    {/* Enhanced Action Bar */}
+    <motion.div 
+      className="action-bar"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.4 }}
+    >
+      <div className="search-container">
+        <SearchIcon className="search-icon" />
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Search tasks by title or description..."
+          value={searchTerm}
+          onChange={handleSearch}
+        />
+      </div>
+      
+      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+        <button className="btn-modern ghost" style={{ padding: '0.75rem 1rem' }}>
+          <FilterIcon size={16} />
+          Filter
+        </button>
+        <button className="btn-modern ghost" style={{ padding: '0.75rem 1rem' }}>
+          <SortAscIcon size={16} />
+          Sort
+        </button>
+      </div>
+    </motion.div>
 
       {/* Task Table */}
       <TaskTable
