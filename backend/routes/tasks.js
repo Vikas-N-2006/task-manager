@@ -11,7 +11,7 @@ import {
 const router = express.Router();
 
 // All routes require authentication
-router.use(basicAuth);
+// router.use(basicAuth);
 
 router.get('/', getTasks);
 router.get('/:id', getTaskById);

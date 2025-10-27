@@ -1,12 +1,16 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import dotenv from 'dotenv';
+import { connectToDatabase } from './database/mongodb.js';
 import taskRoutes from './routes/tasks.js';
 import logRoutes from './routes/logs.js';
-import { initDatabase } from './database/init.js';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(helmet());
@@ -17,9 +21,38 @@ app.use(express.json());
 app.use('/api/tasks', taskRoutes);
 app.use('/api/logs', logRoutes);
 
-// Initialize database and start server
-initDatabase().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'Task Manager API is running',
+    timestamp: new Date().toISOString()
   });
 });
+
+// Error handling middleware
+app.use((error, req, res, next) => {
+  console.error(' Unhandled error:', error);
+  res.status(500).json({ 
+    error: 'Internal server error',
+    details: process.env.NODE_ENV === 'development' ? error.message : undefined
+  });
+});
+
+
+// Initialize database and start server
+const startServer = async () => {
+  try {
+    await connectToDatabase();
+    app.listen(PORT, () => {
+      console.log(` Server running on http://localhost:${PORT}`);
+      console.log(` MongoDB connected successfully`);
+      console.log(`Health check: http://localhost:${PORT}/api/health`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
